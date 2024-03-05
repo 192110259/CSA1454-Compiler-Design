@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_RULES 10
+#define MAX_SYMBOL_LEN 10
+
+// Structure to represent a production rule
+typedef struct {
+    char nonTerminal[MAX_SYMBOL_LEN];
+    char productions[MAX_RULES][MAX_SYMBOL_LEN];
+    int numProductions;
+} Rule;
+
+// Function to eliminate left recursion from a given rule
+void eliminateLeftRecursion(Rule *rule) {
+    Rule newRule;
+    int hasLeftRecursion = 0;
+
+    // Initialize the new rule
+    strcpy(newRule.nonTerminal, strcat(rule->nonTerminal, "'"));
+    newRule.numProductions = 0;
+
+    // Check for left recursion
+    for (int i = 0; i < rule->numProductions; i++) {
+        if (rule->productions[i][0] == rule->nonTerminal[0]) {
+            hasLeftRecursion = 1;
+            break;
+        }
+    }
+
+    // If there is left recursion, eliminate it
+    if (hasLeftRecursion) {
+        // Add new productions without left recursion
+        for (int i = 0; i < rule->numProductions; i++) {
+            if (rule->productions[i][0] == rule->nonTerminal[0]) {
+                // Add new productions without left recursion
+                strcpy(newRule.productions[newRule.numProductions], &rule->productions[i][1]);
+                newRule.numProductions++;
+            } else {
+                // Add old productions with the non-terminal prime
+                strcpy(newRule.productions[newRule.numProductions], rule->productions[i]);
+                strcat(newRule.productions[newRule.numProductions], newRule.nonTerminal);
+                newRule.numProductions++;
+            }
+        }
+
+        // Add epsilon production
+        strcpy(newRule.productions[newRule.numProductions], "epsilon");
+        newRule.numProductions++;
+    } else {
+        // If no left recursion, the rule remains unchanged
+        strcpy(newRule.nonTerminal, rule->nonTerminal);
+        for (int i = 0; i < rule->numProductions; i++) {
+            strcpy(newRule.productions[i], rule->productions[i]);
+        }
+        newRule.numProductions = rule->numProductions;
+    }
+
+    // Print the new rule
+    printf("%s -> ", newRule.nonTerminal);
+    for (int i = 0; i < newRule.numProductions; i++) {
+        printf("%s", newRule.productions[i]);
+        if (i < newRule.numProductions - 1) {
+            printf(" | ");
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    // Example grammar rules
+    Rule rules[] = {
+        {"A", {"Aa", "Ab", "c"}, 3},
+        {"B", {"Bb", "Ba", "d"}, 3},
+        // Add more rules as needed
+    };
+
+    // Eliminate left recursion for each rule
+    for (int i = 0; i < sizeof(rules) / sizeof(rules[0]); i++) {
+        eliminateLeftRecursion(&rules[i]);
+    }
+
+    return 0;
+}
