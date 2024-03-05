@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_RULES 10
+#define MAX_SYMBOL_LEN 10
+
+// Structure to represent a production rule
+typedef struct {
+    char nonTerminal[MAX_SYMBOL_LEN];
+    char productions[MAX_RULES][MAX_SYMBOL_LEN];
+    int numProductions;
+} Rule;
+
+// Function to eliminate left factoring from a given rule
+void eliminateLeftFactoring(Rule *rule) {
+    Rule newRule;
+    int commonPrefixLength = 0;
+
+    // Find the length of the common prefix
+    while (rule->productions[0][commonPrefixLength] == rule->productions[1][commonPrefixLength]) {
+        commonPrefixLength++;
+    }
+
+    // If there is a common prefix, eliminate left factoring
+    if (commonPrefixLength > 0) {
+        // Initialize the new rule
+        strcpy(newRule.nonTerminal, strcat(rule->nonTerminal, "'"));
+        newRule.numProductions = 0;
+
+        // Add the common prefix to the new rule
+        strncpy(newRule.productions[newRule.numProductions], rule->productions[0], commonPrefixLength);
+        newRule.productions[newRule.numProductions][commonPrefixLength] = '\0';
+        newRule.numProductions++;
+
+        // Add remaining suffixes to the original rule
+        for (int i = 0; i < rule->numProductions; i++) {
+            strcpy(rule->productions[i], &rule->productions[i][commonPrefixLength]);
+        }
+
+        // Add remaining suffixes to the new rule
+        for (int i = 0; i < rule->numProductions; i++) {
+            strcpy(newRule.productions[newRule.numProductions], rule->productions[i]);
+            newRule.numProductions++;
+        }
+
+        // Print the new rule
+        printf("%s -> %s%s\n", rule->nonTerminal, newRule.nonTerminal, newRule.productions[0]);
+        printf("%s' -> %s | epsilon\n", newRule.nonTerminal, newRule.productions[1]);
+    } else {
+        // If no common prefix, the rule remains unchanged
+        printf("%s -> ", rule->nonTerminal);
+        for (int i = 0; i < rule->numProductions; i++) {
+            printf("%s", rule->productions[i]);
+            if (i < rule->numProductions - 1) {
+                printf(" | ");
+            }
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    // Example grammar rules
+    Rule rules[] = {
+        {"A", {"abc", "ade", "afg"}, 3},
+        // Add more rules as needed
+    };
+
+    // Eliminate left factoring for each rule
+    for (int i = 0; i < sizeof(rules) / sizeof(rules[0]); i++) {
+        eliminateLeftFactoring(&rules[i]);
+    }
+
+    return 0;
+}
