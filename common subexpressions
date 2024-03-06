@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <string.h>
+
+void optimizeCode(char expression[]) {
+    char optimizedExpression[100];
+    int i, j, k;
+    int len = strlen(expression);
+
+    for (i = 0; i < len; i++) {
+        // Check for common subexpression
+        for (j = i + 1; j < len; j++) {
+            if (expression[i] == expression[j]) {
+                // Replace common subexpression with a temporary variable
+                char tempVar = 'a' + k++;
+                optimizedExpression[j] = tempVar;
+            } else {
+                optimizedExpression[j] = expression[j];
+            }
+        }
+
+        optimizedExpression
