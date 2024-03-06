@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <ctype.h>
+
+int main() {
+    FILE *inputFile;
+    char character;
+    int charCount = 0, wordCount = 0, lineCount = 0, inWord = 0;
+
+    // Open the input file (replace "input.txt" with your file name)
+    inputFile = fopen("input.txt", "r");
+
+    // Check if the file is opened successfully
+    if (inputFile == NULL) {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    // Process each character in the file
+    while ((character = fgetc(inputFile)) != EOF) {
+        // Increment character count
+        charCount++;
+
+        // Check for newline character
+        if (character == '\n') {
+            lineCount++;
+        }
+
+        // Check for whitespace to determine word boundaries
+        if (isspace(character)) {
+            inWord = 0;
+        } else {
+            // Check if entering a new word
+            if (!inWord) {
+                inWord = 1;
+                wordCount++;
+            }
+        }
+    }
+
+    // Close the file
+    fclose(inputFile);
+
+    // Display the results
+    printf("Number of characters: %d\n", charCount);
+    printf("Number of words: %d\n", wordCount);
+    printf("Number of lines: %d\n", lineCount);
+
+    return 0;
+}
