@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to generate code for addition operation
+void generateAdditionCode(int operand1, int operand2) {
+    printf("ADD R%d, R%d, R%d\n", operand1, operand1, operand2);
+}
+
+// Function to generate code for multiplication operation
+void generateMultiplicationCode(int operand1, int operand2) {
+    printf("MUL R%d, R%d, R%d\n", operand1, operand1, operand2);
+}
+
+int main() {
+    // Example input: a = b + c * d;
+
+    // Allocate registers for variables
+    int a = 1;  // Register for variable 'a'
+    int b = 2;  // Register for variable 'b'
+    int c = 3;  // Register for variable 'c'
+    int d = 4;  // Register for variable 'd'
+
+    // Code generation for the assignment statement
+    generateAdditionCode(b, c);       // b + c
+    generateMultiplicationCode(a, d); // (b + c) * d
+
+    printf("Result stored in register R%d\n", a);
+
+    return 0;
+}
