@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to represent a three-address code instruction
+typedef struct {
+    char op;     // Operation: '+', '-', '*', '/'
+    char result; // Result variable
+    char arg1;   // First operand
+    char arg2;   // Second operand
+} ThreeAddressCode;
+
+// Function prototypes
+void generateThreeAddressCode(const char *expression);
+char getTempVariable();
+void printThreeAddressCode(const ThreeAddressCode *code, int numCodes);
+
+int main() {
+    char expression[100];
+
+    // Get the expression from the user
+    printf("Enter an arithmetic expression: ");
+    fgets(expression, sizeof(expression), stdin);
+
+    // Remove newline character from the input
+    for (int i = 0; i < sizeof(expression); i++) {
+        if (expression[i] == '\n') {
+            expression[i] = '\0';
+            break;
+        }
+    }
+
+    // Generate and print three-address code
+    generateThreeAddressCode(expression);
+
+    return 0;
+}
+
+// Global variable to keep track of temporary variable count
+int tempVariableCount = 0;
+
+// Generate three-address code for the given expression
+void generateThreeAddressCode(const char *expression) {
+    int position = 0;
+    int resultCount = 0;
+    ThreeAddressCode codes[100];
+
+    // Function to get a new temporary variable
+    char getTempVariable() {
+        return 'T' + tempVariableCount++;
+    }
+
+    // Function to print three-address code
+    void printThreeAddressCode(const ThreeAddressCode *code, int numCodes) {
+        printf("Three-Address Code:\n");
+
+        for (int i = 0; i < numCodes; i++) {
+            printf("%c = %c %c %c\n", code[i].result, code[i].arg1, code[i].op, code[i].arg2);
+        }
+    }
+
+    // Recursive descent parsing for generating three-address code
+    char parseExpression() {
+        char temp1, temp2;
+        char result = parseTerm();
+
+        while (expression[position] == '+' || expression[position] == '-') {
+            char operator = expression[position++];
+            temp1 = result;
+            temp2 = parseTerm();
+            result = getTempVariable();
+            codes
