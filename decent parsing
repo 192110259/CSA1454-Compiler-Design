@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <ctype.h>
+
+// Function declarations
+int expr();
+int term();
+int factor();
+
+// Global variables
+char input[100];
+int position = 0;
+
+// Function to match a specific character and move to the next one
+void match(char c) {
+    if (input[position] == c) {
+        position++;
+    } else {
+        printf("Error: Expected '%c' at position %d\n", c, position);
+        exit(1);
+    }
+}
+
+// Function to parse a factor
+int factor() {
+    int result;
+
+    if (isdigit(input[position])) {
+        result = input[position] - '0';
+        position++;
+    } else if (input[position] == '(') {
+        match('(');
+        result = expr();
+        match(')');
+    } else {
+        printf("Error: Unexpected character at position %d\n", position);
+        exit(1);
+    }
+
+    return result;
+}
+
+// Function to parse a term
+int term() {
+    int result = factor();
+
+    while (input[position] == '*' || input[position] == '/') {
+        char op = input[position];
+        position++;
+
+        if (op == '*') {
+            result *= factor();
+        } else {
+            int divisor = factor();
+            if (divisor != 0) {
+                result /= divisor;
+            } else {
+                printf("Error: Division by 
