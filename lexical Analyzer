@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void lexicalAnalyzer(FILE *file) {
+    int charCount = 0, wordCount = 0, lineCount = 0;
+    char ch;
+
+    while ((ch = fgetc(file)) != EOF) {
+        charCount++;
+
+        // Check for newline character
+        if (ch == '\n') {
+            lineCount++;
+        }
+
+        // Check for word boundary (space or newline)
+        if (ch == ' ' || ch == '\n' || ch == '\t') {
+            wordCount++;
+        }
+    }
+
+    // Handling the last word and line if the file doesn't end with a newline
+    if (charCount > 0) {
+        wordCount++;
+        lineCount++;
+    }
+
+    // Print the results
+    printf("Number of characters: %d\n", charCount);
+    printf("Number of words: %d\n", wordCount);
+    printf("Number of lines: %d\n", lineCount);
+}
+
+int main() {
+    FILE *file;
+    char filename[100];
+
+    // Get the filename from the user
+    printf("Enter the filename: ");
+    scanf("%s", filename);
+
+    // Open the file
+    file = fopen(filename, "r");
+
+    // Check if the file exists
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    // Call the lexicalAnalyzer function
+    lexicalAnalyzer(file);
+
+    // Close the file
+    fclose(file)
