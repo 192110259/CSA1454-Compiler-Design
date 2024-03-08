@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int main() {
+    int a, b, c, d, result1, result2;
+
+    // Input values
+    printf("Enter values for a, b, c, d: ");
+    scanf("%d %d %d %d", &a, &b, &c, &d);
+
+    // Common subexpression elimination
+    result1 = a * b;
+    result2 = c * d;
+
+    // Original expression
+    printf("Original Expression: %d * %d + %d * %d\n", a, b, c, d);
+    printf("Original Result: %d\n", a * b + c * d);
+
+    // Optimized expression with common subexpression elimination
+    printf("Optimized Expression: %d + %d\n", result1, result2);
+    printf("Optimized Result: %d\n", result1 + result2);
+
+    return 0;
+}
