@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <ctype.h>
+
+// Function prototypes
+int parseExpression();
+int parseTerm();
+int parseFactor();
+
+char expression[100];
+int position = 0;
+
+int main() {
+    // Get the expression from the user
+    printf("Enter an arithmetic expression: ");
+    fgets(expression, sizeof(expression), stdin);
+
+    // Remove newline character from the input
+    for (int i = 0; i < sizeof(expression); i++) {
+        if (expression[i] == '\n') {
+            expression[i] = '\0';
+            break;
+        }
+    }
+
+    // Parse and evaluate the expression
+    int result = parseExpression();
+
+    // Display the result
+    printf("Result: %d\n", result);
+
+    return 0;
+}
+
+// Parse and evaluate the expression
+int parseExpression() {
+    int result = parseTerm();
+
+    while (expression[position] == '+' || expression[position] == '-') {
+        char operator = expression[position++];
+
+        if (operator == '+') {
+            result += parseTerm();
+        } else {
+            result -= parseTerm();
+        }
+    }
+
+    return result;
+}
+
+// Parse and evaluate the term
+int parseTerm() {
+    int result = parseFactor();
+
+    while (expression[position] == '*' || expression[position] == '/') {
+        char operator = expression[position++];
+
+        if (operator == '*') {
+            result *= parseFactor();
+        } else {
+            int divisor = parseFactor();
+            if (divisor != 0) {
+                result /= divisor;
+            } else {
+                printf("Error: Division by zero\n");
+                return 0;
+            }
+        }
+    }
+
+    return result;
+}
+
+// Parse and evaluate the factor
+int parseFactor() {
+    int result;
+
+    if (isdigit(expression[position])) {
+        result = expression[position++] - '0';
+    } else if (expression[position] == '(') {
+        position++; // Move past the opening parenthesis
+        result = parseExpression();
+        position++; // Move past the closing parenthesis
+    } else {
+        printf("Error: Invalid expression\n");
+        exit(1);
+    }
+
+    return result;
+}
